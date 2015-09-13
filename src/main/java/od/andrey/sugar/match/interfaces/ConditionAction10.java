@@ -5,5 +5,5 @@ package od.andrey.sugar.match.interfaces;
  */
 @FunctionalInterface
 public interface ConditionAction10<T> extends ConditionAction<T> {
-    void accept(T a, T b, T c, T d, T e, T f, T h, T i, T j);
+    void accept(T a, T b, T c, T d, T e, T f, T g, T h, T i, T j);
 }
