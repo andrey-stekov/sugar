@@ -45,35 +45,38 @@ public class MatchLib {
         return new WildRex<>(rex);
     }
 
-    public static <T> void match(List<T> list, Case<T, Boolean>... cases) {
-        for (Case<T, Boolean> currentCase : cases) {
-            if (currentCase.matches(list) != null) {
-                break;
+    public static <T, R> R match(List<T> list, Case<T, R>... cases) {
+        for (Case<T, R> currentCase : cases) {
+            R tmpResult = currentCase.matches(list);
+            if (tmpResult != null) {
+                return tmpResult;
             }
         }
+
+        return null;
     }
 
-    public static <T> void match(Set<T> set, Case<T, Boolean>... cases) {
-        match(new ArrayList<T>(set), cases);
+    public static <T, R> R match(Set<T> set, Case<T, R>... cases) {
+        return match(new ArrayList<>(set), cases);
     }
 
-    public static <T> void match(Map.Entry<T, T> mapEntry, Case<T, Boolean>... cases) {
-        match(asList(mapEntry.getKey(), mapEntry.getValue()), cases);
+    public static <T, R> R match(Map.Entry<T, T> mapEntry, Case<T, R>... cases) {
+        return match(asList(mapEntry.getKey(), mapEntry.getValue()), cases);
     }
 
-    public static <T> void match(Pair<T, T> pair, Case<T, Boolean>... cases) {
-        match(asList(pair.first, pair.second), cases);
+    public static <T, R> R match(Pair<T, T> pair, Case<T, R>... cases) {
+        return match(asList(pair.first, pair.second), cases);
     }
 
-    public static <T> void match(Triple<T, T, T> triple, Case<T, Boolean>... cases) {
-        match(asList(triple.first, triple.second, triple.third), cases);
+    public static <T, R> R match(Triple<T, T, T> triple, Case<T, R>... cases) {
+        return match(asList(triple.first, triple.second, triple.third), cases);
     }
 
-    public static <T> void matchOne(T obj, Case<T, Boolean>... cases) {
-        match(Collections.singletonList(obj), cases);
+    public static <T, R> R matchOne(T obj, Case<T, R>... cases) {
+        return match(Collections.singletonList(obj), cases);
     }
 
-    public static <T> CompliesConditions when(Object... conditions) {
+    public static <T, R> CompliesConditions when(Object... conditions) {
         List<Condition<T>> conditionsList = new ArrayList<>(conditions.length);
 
         int index = 0;
@@ -83,11 +86,11 @@ public class MatchLib {
             } else if (condition instanceof Tail && index != conditions.length - 1) {
                 throw new RuntimeException("You can use <tail> condition only as last condition");
             } else {
-                conditionsList.add(new Eq<T>((T) condition));
+                conditionsList.add(new Eq<>((T) condition));
             }
             index++;
         }
 
-        return new CompliesConditions(conditionsList.toArray(new Condition[conditionsList.size()]));
+        return new CompliesConditions<T, R>(conditionsList.toArray(new Condition[conditionsList.size()]));
     }
 }

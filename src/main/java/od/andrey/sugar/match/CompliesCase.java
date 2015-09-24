@@ -11,12 +11,12 @@ import java.util.List;
 /**
  * Created by ALemeshev on 08.09.2015.
  */
-public class CompliesCase<T> implements Case<T, Boolean> {
+public class CompliesCase<T, R> implements Case<T, R> {
     private final Condition<T>[] conditions;
-    private final ConditionAction action;
+    private final Action<T, R> action;
     private final int numberOfArguments;
 
-    public CompliesCase(Condition<T>[] conditions, ConditionAction action, int numberOfArguments) {
+    public CompliesCase(Condition<T>[] conditions, Action<T, R> action, int numberOfArguments) {
         this.conditions = conditions;
         this.action = action;
         this.numberOfArguments = numberOfArguments;
@@ -44,45 +44,35 @@ public class CompliesCase<T> implements Case<T, Boolean> {
         return true;
     }
 
-    private void callAction(List<T> agrs) {
+    private R callAction(List<T> agrs) {
         switch (numberOfArguments) {
             case 1:
-                ((ConditionAction1)action).accept(agrs.get(0));
-                break;
+                return ((Action1<T, R>)action).accept(agrs.get(0));
             case 2:
-                ((ConditionAction2)action).accept(agrs.get(0), agrs.get(1));
-                break;
+                return ((Action2<T, R>)action).accept(agrs.get(0), agrs.get(1));
             case 3:
-                ((ConditionAction3)action).accept(agrs.get(0), agrs.get(1), agrs.get(2));
-                break;
+                return ((Action3<T, R>)action).accept(agrs.get(0), agrs.get(1), agrs.get(2));
             case 4:
-                ((ConditionAction4)action).accept(agrs.get(0), agrs.get(1), agrs.get(2), agrs.get(3));
-                break;
+                return ((Action4<T, R>)action).accept(agrs.get(0), agrs.get(1), agrs.get(2), agrs.get(3));
             case 5:
-                ((ConditionAction5)action).accept(agrs.get(0), agrs.get(1), agrs.get(2), agrs.get(3), agrs.get(4));
-                break;
+                return ((Action5<T, R>)action).accept(agrs.get(0), agrs.get(1), agrs.get(2), agrs.get(3), agrs.get(4));
             case 6:
-                ((ConditionAction6)action).accept(agrs.get(0), agrs.get(1), agrs.get(2), agrs.get(3), agrs.get(4), agrs.get(5));
-                break;
+                return ((Action6<T, R>)action).accept(agrs.get(0), agrs.get(1), agrs.get(2), agrs.get(3), agrs.get(4), agrs.get(5));
             case 7:
-                ((ConditionAction7)action).accept(agrs.get(0), agrs.get(1), agrs.get(2), agrs.get(3), agrs.get(4), agrs.get(5), agrs.get(6));
-                break;
+                return ((Action7<T, R>)action).accept(agrs.get(0), agrs.get(1), agrs.get(2), agrs.get(3), agrs.get(4), agrs.get(5), agrs.get(6));
             case 8:
-                ((ConditionAction8)action).accept(agrs.get(0), agrs.get(1), agrs.get(2), agrs.get(3), agrs.get(4), agrs.get(5), agrs.get(6), agrs.get(7));
-                break;
+                return ((Action8<T, R>)action).accept(agrs.get(0), agrs.get(1), agrs.get(2), agrs.get(3), agrs.get(4), agrs.get(5), agrs.get(6), agrs.get(7));
             case 9:
-                ((ConditionAction9)action).accept(agrs.get(0), agrs.get(1), agrs.get(2), agrs.get(3), agrs.get(4), agrs.get(5), agrs.get(6), agrs.get(7), agrs.get(8));
-                break;
+                return ((Action9<T, R>)action).accept(agrs.get(0), agrs.get(1), agrs.get(2), agrs.get(3), agrs.get(4), agrs.get(5), agrs.get(6), agrs.get(7), agrs.get(8));
             case 10:
-                ((ConditionAction10)action).accept(agrs.get(0), agrs.get(1), agrs.get(2), agrs.get(3), agrs.get(4), agrs.get(5), agrs.get(6), agrs.get(7), agrs.get(8), agrs.get(9));
-                break;
+                return ((Action10<T, R>)action).accept(agrs.get(0), agrs.get(1), agrs.get(2), agrs.get(3), agrs.get(4), agrs.get(5), agrs.get(6), agrs.get(7), agrs.get(8), agrs.get(9));
             default:
                 throw new RuntimeException("Illegal number of arguments: " + numberOfArguments);
         }
     }
 
     @Override
-    public Boolean matches(List<T> agrs) {
+    public R matches(List<T> agrs) {
         int lastCondition = conditions.length;
         List<T> tail = null;
 
@@ -94,16 +84,15 @@ public class CompliesCase<T> implements Case<T, Boolean> {
         }
 
         if (agrs.size() >= lastCondition) {
-            List<T> substitutionArgs =  new ArrayList<T>();
+            List<T> substitutionArgs =  new ArrayList<>();
             if (checkConditions(agrs, substitutionArgs, lastCondition)) {
                 if (tail != null) {
                     substitutionArgs.add((T) tail);
                 }
 
-                callAction(substitutionArgs);
-                return true;
+                return callAction(substitutionArgs);
             }
         }
-        return false;
+        return null;
     }
 }

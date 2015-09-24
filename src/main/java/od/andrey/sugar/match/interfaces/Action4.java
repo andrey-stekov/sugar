@@ -4,6 +4,6 @@ package od.andrey.sugar.match.interfaces;
  * Created by andrey on 08.09.2015.
  */
 @FunctionalInterface
-public interface ConditionAction4<T> extends ConditionAction<T> {
-    void accept(T a, T b, T c, T d);
+public interface Action4<T, R> extends Action<T, R> {
+    R accept(T a, T b, T c, T d);
 }
